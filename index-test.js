@@ -140,6 +140,15 @@ test("Boards can have many cheeses and cheeses can be on many boards", async () 
         
         expect(board1Check.length).toBe(3);
         expect(cheese1Check.length).toBe(3);   
-})
+
+    //Eager Loading 
+    let loadedCheeseData = await Cheese.findAll({
+        include: [{model: Board, as: "boards"}]
+    });       
+  
+     expect(loadedCheeseData[1].boards.length).toBe(3);
+
+    });
+   
 
 })
