@@ -74,6 +74,72 @@ test("A user can more than one Board", async () => {
 
 });
 
+// Many to Many 
 
+test("Boards can have many cheeses and cheeses can be on many boards", async () => {
+    
+    let board1 = {
+        type: "European Cheese Board", 
+        description: "Fresh and mild soft cheese", 
+        rating: 8       
+    }
+
+    let board2 = {
+        type: "American Cheese Board", 
+        description: "Mild, refreshing and supple", 
+        rating: 7
+    }
+
+    let board3 = {
+        type: "NorCal Cheese Board", 
+        description: "Solid cheese with a sharp buttery flavor", 
+        rating: 6
+    }
+
+    let cheese1 = {
+        title: "Cheddar",  
+        description: "relatively-hard"
+    }
+
+    let cheese2 = {
+        title: "Provolone",  
+        description: "semi-hard Italian cheese"
+    }
+
+    let cheese3 = {
+        title: "Blue cheese",  
+        description: "semi-soft cheese with sharp, salty flavor"
+    }
+
+    let cheeseList = await Cheese.bulkCreate([cheese1, cheese2, cheese3]);
+
+        // Creating my Board Table Entries
+        let boardList = await Board.bulkCreate([board1, board2, board3]);
+
+        let firstBoard = await boardList[0];
+        let secondBoard = await boardList[1];
+        let thirdBoard = await boardList[2];
+
+        let firstCheese = await cheeseList[0];
+        let secondCheese = await cheeseList[1];
+        let thirdCheese = await cheeseList[2];
+
+        await firstBoard.addCheeses(firstCheese);
+        await firstBoard.addCheeses(thirdCheese);
+        await firstBoard.addCheeses(secondCheese);
+        await thirdBoard.addCheeses(firstCheese);
+
+        await firstCheese.addBoards(firstBoard);
+        await firstCheese.addBoards(thirdBoard);
+        await firstCheese.addBoards(secondBoard);
+        await secondCheese.addBoards(thirdBoard);
+
+        let board1Check = await firstBoard.getCheeses();
+
+        let cheese1Check = await firstCheese.getBoards();
+        
+        expect(board1Check.length).toBe(3);
+        expect(cheese1Check.length).toBe(3);   
+})
 
 })
